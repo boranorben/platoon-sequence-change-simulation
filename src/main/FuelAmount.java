@@ -16,9 +16,13 @@ public class FuelAmount implements SequenceChange {
 			Collections.swap(platoon, i, j);
 		}
 	}
-	
+
 	@Override
 	public boolean checkTimeSlot(double time) {
 		return false;
+	}
+
+	public String toString() {
+		return "Fuel Amount Sequence Change";
 	}
 }

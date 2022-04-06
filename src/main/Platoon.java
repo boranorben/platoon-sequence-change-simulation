@@ -1,6 +1,8 @@
 package main;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 
 public class Platoon {
 	private SequenceChange seqncChange;
@@ -46,25 +48,33 @@ public class Platoon {
 	}
 
 	private void saveSeqnc() {
-		String order = "";
+		String seqnc = "";
 		for (Truck truck : platoon) {
-			order += truck.getOrder();
+			seqnc += truck.getOrder();
 		}
-		this.platoonSeqnc.add(order);
+		this.platoonSeqnc.add(seqnc);
 	}
 
-	private int getSwitchCnt() {
+	private ArrayList<String> sortTimeSlot() {
+		ArrayList<String> clonePlatoonSeqnc = new ArrayList<String>();
+		Iterator<String> it = this.platoonSeqnc.iterator();
+		while (it.hasNext()) {
+			String timeSlot = it.next();
+			clonePlatoonSeqnc.add(timeSlot);
+		}
+
+		Collections.sort(clonePlatoonSeqnc);
+		return clonePlatoonSeqnc;
+	}
+
+	private int getSwitchCnt(ArrayList<String> platoonSeqnc) {
 		int cnt = 0;
-		for (int i = 0; i < this.platoonSeqnc.size() - 1; i++) {
+		for (int i = 0; i < platoonSeqnc.size() - 1; i++) {
 			if (!platoonSeqnc.get(i).equals(platoonSeqnc.get(i + 1))) {
 				cnt++;
 			}
 		}
 		return cnt;
-	}
-	
-	private void sortTimeSlot() {
-		
 	}
 
 	public ArrayList<String> getPlatoonSeqnc() {
@@ -90,8 +100,10 @@ public class Platoon {
 	}
 
 	public String toString() {
-		return String.format("Total distance: %d km / Total time: %.1f hr / Switch count: %d", this.distance,
-				this.getCurrTime(), this.getSwitchCnt());
+		return String.format(
+				"Total distance: %d km \nTotal time: %.1f hr \nSwitch count (without sorting time slots): %d \nSwitch count (with sorting time slots): %d",
+				this.distance, this.getCurrTime(), this.getSwitchCnt(this.platoonSeqnc),
+				this.getSwitchCnt(sortTimeSlot()));
 	}
 
 	public void start() {
@@ -110,7 +122,7 @@ public class Platoon {
 					// Sequence Change algorithm here
 					if (this.seqncChange instanceof FuelAmount) {
 						this.seqncChange.tryToSwitch(this.platoon, i, j);
-					} else {
+					} else if (this.seqncChange instanceof TravelingTime) {
 						if (this.getCurrTime() == Math.floor(this.getCurrTime())
 								&& this.seqncChange.checkTimeSlot(this.getCurrTime())) {
 							this.seqncChange.tryToSwitch(platoon, i, j);
@@ -120,14 +132,12 @@ public class Platoon {
 				currTruck.calFuel(this.reducedfuelConsump(i));
 			}
 			if (this.getCurrTime() == Math.floor(this.getCurrTime())) {
+				if (this.seqncChange instanceof RoundRobin) {
+					this.seqncChange.tryToSwitch(this.platoon, 0, 0);
+				}
 				this.saveSeqnc();
 			}
 			this.distance++;
-		}
-
-		System.out.println(this.toString());
-		for (String orderString : this.platoonSeqnc) {
-			System.out.println(orderString);
 		}
 	}
 }
