@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class FuelAmount implements SequenceChange {
-	private static final double FULL_RATE = 32.6; // fuel consumption rate
-	private static final double HALF_RATE = 16.3; // fuel consumption rate divided by two
+	private static final double FULL_RATE = 36.0; // fuel consumption rate
+	private static final double HALF_RATE = 13.0; // fuel consumption rate divided by two
 
 	@Override
 	public void tryToSwitch(ArrayList<Truck> platoon, int i, int j) {
@@ -23,6 +23,6 @@ public class FuelAmount implements SequenceChange {
 	}
 
 	public String toString() {
-		return "Fuel Amount Sequence Change";
+		return String.format("Fuel Amount %s", toString);
 	}
 }

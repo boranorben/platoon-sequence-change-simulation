@@ -77,6 +77,14 @@ public class Platoon {
 		return cnt;
 	}
 
+	private double roundTime(double time) {
+		double rounded = time;
+		rounded *= 100;
+		rounded = (double) ((int) rounded);
+		rounded /= 100;
+		return rounded;
+	}
+
 	public ArrayList<String> getPlatoonSeqnc() {
 		return this.platoonSeqnc;
 	}
@@ -101,7 +109,7 @@ public class Platoon {
 
 	public String toString() {
 		return String.format(
-				"Total distance: %d km \nTotal time: %.1f hr \nSwitch count (without sorting time slots): %d \nSwitch count (with sorting time slots): %d",
+				"Total distance: %d km \nTotal time: %.2f hr \nSwitch count (without sorting time slots): %d \nSwitch count (with sorting time slots): %d",
 				this.distance, this.getCurrTime(), this.getSwitchCnt(this.platoonSeqnc),
 				this.getSwitchCnt(sortTimeSlot()));
 	}
@@ -119,24 +127,35 @@ public class Platoon {
 				}
 				for (int j = i + 1; j < this.platoon.size(); j++) {
 
-					// Sequence Change algorithm here
 					if (this.seqncChange instanceof FuelAmount) {
 						this.seqncChange.tryToSwitch(this.platoon, i, j);
-					} else if (this.seqncChange instanceof TravelingTime) {
-						if (this.getCurrTime() == Math.floor(this.getCurrTime())
-								&& this.seqncChange.checkTimeSlot(this.getCurrTime())) {
-							this.seqncChange.tryToSwitch(platoon, i, j);
-						}
 					}
 				}
 				currTruck.calFuel(this.reducedfuelConsump(i));
 			}
-			if (this.getCurrTime() == Math.floor(this.getCurrTime())) {
-				if (this.seqncChange instanceof RoundRobin) {
-					this.seqncChange.tryToSwitch(this.platoon, 0, 0);
-				}
+
+			/**
+			 * FAH
+			 */
+			if (this.seqncChange instanceof FuelAmount) {
 				this.saveSeqnc();
 			}
+
+			/**
+			 * TTH and RRH
+			 */
+
+			if (!(this.seqncChange instanceof FuelAmount) && this.seqncChange.checkTimeSlot(this.getCurrTime())) {
+				this.seqncChange.tryToSwitch(this.platoon, 0, 0);
+				this.saveSeqnc();
+			}
+
+//			if (!(this.seqncChange instanceof FuelAmount)
+//					&& this.seqncChange.checkTimeSlot(roundTime(this.getCurrTime()) * 10)) {
+//				this.seqncChange.tryToSwitch(this.platoon, 0, 0);
+//				this.saveSeqnc();
+//			}
+
 			this.distance++;
 		}
 	}

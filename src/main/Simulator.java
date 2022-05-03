@@ -1,7 +1,8 @@
 package main;
 
 public class Simulator {
-	private final static SequenceChange[] ALGOS = { new FuelAmount(), new TravelingTime(), new RoundRobin() };
+//	private final static SequenceChange[] ALGOS = { new FuelAmount(), new TravelingTime(), new RoundRobin() };
+	private final static SequenceChange[] ALGOS = { new TravelingTime(), new RoundRobin() };
 	private final static int[] NUM_TRUCK = { 2, 3, 4, 5, 6 };
 
 	public static void main(String[] args) {
@@ -14,9 +15,5 @@ public class Simulator {
 				System.out.println(String.format("Number of truck: %d \n%s \n", NUM_TRUCK[j], simulation.toString()));
 			}
 		}
-
-//		Platoon simulation = new Platoon(new RoundRobin(), 6);
-//		simulation.start();
-//		System.out.println(simulation.toString());
 	}
 }

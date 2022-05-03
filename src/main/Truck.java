@@ -1,10 +1,12 @@
 package main;
 
+import java.util.Random;
+
 public class Truck implements Comparable<Truck> {
 	private int order;
 
 	private final static double INIT_FUEL = 1135.62; // 300 gallon = 1135.62l
-	protected final static double FUEL_CONSUMP = 0.326; // 32.6l/100km
+	protected final static double FUEL_CONSUMP = 0.36; // 36.00l/100km
 	private double currFuel;
 
 	private int velocity;
@@ -20,8 +22,16 @@ public class Truck implements Comparable<Truck> {
 		this.constInterDist = constInterDist;
 
 		this.currFuel = this.INIT_FUEL;
+//		this.currFuel = this.randFuel();
 		this.velocity = 0;
 		this.interDist = 0;
+	}
+
+	private double randFuel() {
+		double rangeMin = 946.35;
+		double rangeMax = 1135.62;
+		Random rand = new Random();
+		return rangeMin + (rangeMax - rangeMin) * rand.nextDouble();
 	}
 
 	public int getOrder() {
